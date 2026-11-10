@@ -9,6 +9,9 @@ Build your own lab. A place to build UI components with your coding agent, judge
 - **Films** that drive the real component, not a recording: a storyboard of clicks and tweens, rendered frame by frame to mp4 in light and dark.
 - **Taste that compounds.** Every toss asks why, and the reason becomes a rule your agent reads next time.
 - **DialKit built in.** Tune a spring or a radius by hand in the workbench, then hand the numbers back to your agent.
+- **Connected design systems.** Connect a local repository or GitHub URL, review its discovered token/component/rule manifest, and create source-pinned drafts from its components.
+
+BYOL is the original byolab expanded with this connected-source workflow—not a second application. Connected drafts use the same gallery, specimen header, canvas, theme behavior, DialKit, footer, and keep/toss lifecycle as locally scaffolded work.
 
 This is a blank canvas. It starts from my opinions (a grid, a theme, a few taste rules) so it works out of the box, but it's meant to become yours. No skill gives you taste. You are the skill.
 
@@ -77,6 +80,14 @@ const dial = useDialKit('Seat stepper', {
 
 Open the component at `#/s/<slug>`, drag the controls in the panel, then press **Copy** and paste the values to your agent. It bakes them into the component as plain constants. The panel only shows in `pnpm dev`, and films use the baked values, so renders stay exact.
 
+## Connected source workflow
+
+Use **Connect design system** in the gallery, enter a local repository root or credential-free GitHub URL, and review BYOL's proposed manifest. BYOL prefers a committed `byol.design-system.json`; otherwise it infers candidate token, component, rule, and theme sources without executing repository code. Nothing becomes authoritative until the owner approves the proposal.
+
+After approval, **New component draft** opens searchable source components. A draft is pinned to the repository and commit, appears in the ordinary gallery, and opens in the existing specimen canvas. DialKit controls come from source evidence. Overrides, violations, ambiguities, and behavioral notices remain visible in one issue rail. Hardcoded visual values or shared-component bypasses require exact draft-scoped approval, which is invalidated by any relevant source, revision, property, rule, or value change.
+
+BYOL keeps its own design system formal in [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md). Its chrome strictly uses `src/components/ui` and `src/index.css`; connected previews retain their source system's token namespace. Unsupported source execution is shown as a blocker rather than being misrepresented as the actual component.
+
 ## Updating
 
 byolab ships releases as tags (`v0.1.0`, ...) with notes in [CHANGELOG.md](CHANGELOG.md). To pull one into your lab, ask your agent:
@@ -98,6 +109,8 @@ The files that hold it all:
 
 - **`TASTE.md`** is your rules. It starts with sensible defaults; replace them as you judge work.
 - **`GRID.md`** sets the spacing, radius, and type limits that `pnpm lab grid` checks.
+- **`DESIGN_SYSTEM.md`** defines BYOL's internal components, tokens, enforcement rules, and the preview namespace boundary.
+- **`byol.design-system.json`** is the machine-readable internal design-system manifest.
 - **`src/index.css`** holds the theme tokens and elevation scale. Change the look there.
 - **`.agents/skills/`** teaches your agent the workflows. Edit them like any other file.
 - **`LEDGER.md`** appears after your first keep or toss and records every verdict.

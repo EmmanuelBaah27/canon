@@ -13,14 +13,14 @@ A design lab you build with an agent. It holds:
 
 <instructions>
 
-- MUST read `TASTE.md` and `GRID.md` before building or reviewing anything. They are the owner's taste and override any default you have.
+- MUST read `TASTE.md`, `GRID.md`, `DESIGN_SYSTEM.md`, and `byol.design-system.json` before building or reviewing anything. They define the owner's taste, measurable constraints, component/token contract, and authoritative sources.
 - Create work with `pnpm lab new <slug>`. MUST NOT hand-create a draft folder: the command writes the registry entry, component, and film in the shape the lab and renderer expect.
 - New work starts as a draft. Only the owner keeps or tosses it, in the gallery or by asking you to run `pnpm lab keep` / `pnpm lab toss`. MUST NOT judge for them.
 - When the owner gives a crit note, fix it, then add one line to `TASTE.md` as a rule with its reason. A note that stays in the conversation is lost.
 - Use `--json` when you need to read a command's result.
 - `pnpm lab grid <slug>` MUST pass before handing work over.
 - Films MUST stay deterministic: state comes from `useFilmFrame()` and the timeline, never `Math.random`, timers, or wall-clock time. `pnpm lab check <film>` MUST pass before a render is called done.
-- UI uses the shadcn components in `src/components/ui` and the tokens in `src/index.css`. Change the theme there, not per component. Icons come from `lucide-react`.
+- UI uses the shadcn components in `src/components/ui` and the tokens in `src/index.css`. Hardcoded visual values and bypassing a shared component require an issue and owner approval. Change the theme there, not per component. Icons come from `lucide-react`.
 - Read a still after rendering it. "It rendered" is not "it looks right".
 - DialKit (`dialkit`) is installed for live tuning. Use `useDialKit` while values are being tuned, and bake the final numbers into plain constants before a film is called done, because films must be deterministic.
 - The lab's version is `version` in `package.json`; releases and what to do about them are in `CHANGELOG.md`.
@@ -30,6 +30,7 @@ A design lab you build with an agent. It holds:
 | --- | --- |
 | Owner asks what to do, how it works, or is new | `.agents/skills/lab-start/SKILL.md` |
 | Update or upgrade the lab, or "what changed" | `.agents/skills/lab-update/SKILL.md` |
+| Connect a design system, import or retheme a source component, or update a connected draft | `.agents/skills/lab-source/SKILL.md` |
 | Build or refine a component | `.agents/skills/lab-component/SKILL.md` |
 | Without-versus-with explainer | `.agents/skills/lab-explainer/SKILL.md` |
 | Make, retime, or render a film | `.agents/skills/lab-film/SKILL.md` |
