@@ -7,7 +7,7 @@ Build your own lab. A place to build UI components with your coding agent, judge
 - **Gallery** of everything you've made, with drafts waiting for a keep or toss.
 - **Workbench** for each component, with an anatomy view (skeleton and live measurements) for layout breakdowns.
 - **Films** that drive the real component, not a recording: a storyboard of clicks and tweens, rendered frame by frame to mp4 in light and dark.
-- **Taste that compounds.** Every toss asks why, and the reason becomes a rule your agent reads next time.
+- **Taste that compounds.** Every toss records why; after five judgments, the lab helps you promote reusable lessons into rules your agent reads next time.
 - **DialKit built in.** Tune a spring or a radius by hand in the workbench, then hand the numbers back to your agent.
 
 This is a blank canvas. It starts from my opinions (a grid, a theme, a few taste rules) so it works out of the box, but it's meant to become yours. No skill gives you taste. You are the skill.

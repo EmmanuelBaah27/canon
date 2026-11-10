@@ -2,7 +2,6 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, renameSync, writeF
 import { resolve } from 'node:path'
 
 export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
-const TOSS_HEADING = '## Toss notes, not yet rules'
 
 const today = () => new Date().toLocaleDateString('en-CA')
 
@@ -50,15 +49,12 @@ export function keep(root, slug) {
 
 export function toss(root, slug, reason) {
   const why = reason?.trim()
-  if (!why) throw Object.assign(new Error('Say why in one line. The reason becomes a taste rule.'), { status: 400 })
+  if (!why) throw Object.assign(new Error('Say why in one line. The reason is recorded in Mande\'s judgment ledger.'), { status: 400 })
   const { from, mix } = draftOf(root, slug)
   const bin = resolve(root, 'out/tossed')
   mkdirSync(bin, { recursive: true })
   const to = resolve(bin, `${today()}-${slug}`)
   renameSync(from, to)
   ledger(root, `- ${today()} tossed \`${slug}\`${mix}: ${why}`)
-  const tastePath = resolve(root, 'TASTE.md')
-  const taste = existsSync(tastePath) ? readFileSync(tastePath, 'utf8') : '# Taste\n'
-  writeFileSync(tastePath, `${taste.includes(TOSS_HEADING) ? taste.trimEnd() : `${taste.trimEnd()}\n\n${TOSS_HEADING}\n`}\n- \`${slug}\`${mix}: ${why}\n`)
   return { slug, tossed: `out/tossed/${today()}-${slug}`, reason: why }
 }

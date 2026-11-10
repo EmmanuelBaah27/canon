@@ -1,6 +1,7 @@
 import type { ServerResponse } from 'node:http'
 import type { Plugin } from 'vite'
 import { keep, toss } from '../scripts/verdict.mjs'
+import { markTasteReviewed, tasteReviewStatus } from '../scripts/taste-review.mjs'
 
 const send = (res: ServerResponse, status: number, body: object) => {
   res.statusCode = status
@@ -14,12 +15,14 @@ export function labApi(root: string): Plugin {
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use('/__lab', async (req, res) => {
-        if (req.method !== 'POST') return send(res, 405, { error: 'POST only' })
-        let body = ''
-        for await (const chunk of req) body += chunk
-        const { slug, reason } = JSON.parse(body || '{}') as { slug?: string; reason?: string }
-        const action = req.url?.replace(/^\//, '')
+        const action = req.url?.replace(/^\//, '').split('?')[0]
         try {
+          if (req.method === 'GET' && action === 'taste-review') return send(res, 200, tasteReviewStatus(root))
+          if (req.method !== 'POST') return send(res, 405, { error: 'POST only' })
+          if (action === 'mark-taste-reviewed') return send(res, 200, markTasteReviewed(root))
+          let body = ''
+          for await (const chunk of req) body += chunk
+          const { slug, reason } = JSON.parse(body || '{}') as { slug?: string; reason?: string }
           if (action === 'keep') return send(res, 200, keep(root, slug ?? ''))
           if (action === 'toss') return send(res, 200, toss(root, slug ?? '', reason))
           send(res, 404, { error: `Unknown action "${action}"` })

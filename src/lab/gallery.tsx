@@ -7,6 +7,7 @@ import { FitFrame } from './fit-frame'
 import { ThemeToggle } from './chrome'
 import { DraftVerdict } from './draft-verdict'
 import { KindMenu, type KindFilter } from './kind-menu'
+import { TasteReviewPrompt } from './taste-review'
 
 const EASE = 'ease-[cubic-bezier(0.23,1,0.32,1)]'
 
@@ -129,6 +130,7 @@ export function Gallery() {
         </div>
       </header>
       <main className="mx-auto flex max-w-[1280px] flex-col gap-12 px-8 pb-16">
+        <TasteReviewPrompt />
         {everything.length ? (
           <>
             <Group title="To judge" note="keep or toss" items={pending} />

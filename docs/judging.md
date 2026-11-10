@@ -16,7 +16,7 @@ pnpm lab keep seat-stepper
 
 ## Toss
 
-Toss it when it isn't right. The lab asks why, in one line. The draft moves to `out/tossed/` (you can still get it back), and your reason lands in `TASTE.md` under "Toss notes, not yet rules". Next time your agent proposes or builds anything, it reads that note and turns it into a rule.
+Toss it when it isn't right. The lab asks why, in one line. The draft moves to `out/tossed/` (you can still get it back), and your reason lands in `LEDGER.md`. After five unreviewed judgments, the gallery offers a Mande taste review. Your agent proposes reusable rules, and `TASTE.md` changes only after you approve them.
 
 ![Tossing a draft: the cursor presses Toss on the Plan switch card and types "the switch is too small to find, and $200 hides the saving"](media/toss.gif)
 
@@ -42,12 +42,12 @@ A few habits that pay off:
 - **One note, one problem.** Two problems are fine in one line, but split them with "and" so each can become its own rule.
 - **Say it the way you'd say it out loud.** The agent keeps your words. Casual is fine; vague isn't.
 - **Name what you'd keep.** "Love the receipt, hate the timer bar" saves the good half next time.
-- **Notes outside a toss count too.** When you tell your agent "the cursor is too slow" mid-build, it fixes it and adds a rule to `TASTE.md`.
+- **Notes outside a toss count too.** When you tell your agent "the cursor is too slow" mid-build, it fixes the draft and can propose a reusable rule for your approval.
 
 ## Where it all goes
 
 | File | What's in it |
 | --- | --- |
 | `LEDGER.md` | Every keep and toss, with the date and the idea. Your agent reads it to stop repeating tossed ideas. |
-| `TASTE.md` | Your rules. Toss notes collect at the bottom until your agent turns them into rules with reasons. |
+| `TASTE.md` | Mande's concise, reusable rules. Only owner-approved lessons are added. |
 | `out/tossed/` | Tossed drafts, untracked. Move a folder back into `src/drafts/` to revive it. |
