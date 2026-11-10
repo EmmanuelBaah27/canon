@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { DraftSchema, PreviewOverrideSchema } from '@byol/core';
+import { DraftSchema, PreviewOverrideSchema, type DesignFinding } from '@byol/core';
 import { DraftService, createDraft, keepDraft, closeDraft, applyOverride, resolveOverride, tokenBindingTarget } from './drafts';
 import { manifest, tokenIndex } from './test-fixtures';
 
@@ -332,4 +332,24 @@ it('retires superseded revision issues after successful save while preserving un
   service.issues.add({ ...issue, id: 'failed-second', draftId: second.id, draftRevision: second.revision, target: { kind: 'draft', id: second.id } });
   await service.setPreviewValue(first.id, 'checked', true);
   expect(service.issues.list().map((entry) => entry.id).sort()).toEqual(['failed-second', 'source-first']);
+});
+
+it('persists approvals as draft metadata and invalidates them when the revision changes', async () => {
+  const draft = await service.createDraft(manifest);
+  const finding: DesignFinding = {
+    id: 'visual-radius', category: 'visual-value', severity: 'blocker', repositoryId: 'repo',
+    sourceCommit: draft.sourceCommit, draftId: draft.id, draftRevision: draft.revision, componentId: manifest.id,
+    ruleId: 'hardcodedVisualValues', property: 'borderRadius', currentValue: 12,
+    location: { path: manifest.source.path, line: 1, column: 1 }, evidence: 'borderRadius:12',
+    applicableRule: 'Use a token.', alternatives: ['tokens.radius.control'],
+    integrationImpact: 'Requires approval.', actions: ['approve'],
+  };
+  await service.approveFinding(draft.id, finding, 'owner', 'Source parity');
+  expect(service.isFindingApproved(draft.id, finding)).toBe(true);
+  const recovered = await DraftService.open({ projectRoot, sessionId: 'open-session', tokenIndex });
+  expect(recovered.getApprovals(draft.id)).toHaveLength(1);
+  expect(recovered.isFindingApproved(draft.id, finding)).toBe(true);
+  await recovered.setPreviewValue(draft.id, 'checked', true);
+  expect(recovered.getApprovals(draft.id)).toHaveLength(1);
+  expect(recovered.isFindingApproved(draft.id, { ...finding, draftRevision: 1 })).toBe(false);
 });

@@ -13,13 +13,14 @@ describe('unified issue service', () => {
     service.add(issue('1', 'override', 'warning'));
     service.add(issue('2', 'information', 'information'));
     service.add(issue('3', 'validation', 'blocker'));
-    expect(service.count()).toBe(3);
-    expect(service.filters()).toEqual(['override', 'information', 'validation']);
+    service.add(issue('4', 'behavioral-addition', 'information'));
+    expect(service.count()).toBe(4);
+    expect(service.filters()).toEqual(['override', 'information', 'validation', 'behavioral-addition']);
     expect(service.list({ type: 'override', draftId: 'draft' }).map((entry) => entry.id)).toEqual(['1']);
     expect(service.list({ severity: 'blocker' }).map((entry) => entry.id)).toEqual(['3']);
     service.resolve('1');
-    expect(service.count()).toBe(2);
-    expect(service.filters()).toEqual(['information', 'validation']);
+    expect(service.count()).toBe(3);
+    expect(service.filters()).toEqual(['information', 'validation', 'behavioral-addition']);
     expect(service.list().some((entry) => entry.id === '1')).toBe(false);
   });
 

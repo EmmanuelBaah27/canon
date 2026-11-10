@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { lstat, mkdir, readFile, readdir, realpath, rename, rm, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, sep } from 'node:path';
-import { ComponentManifestSchema, DraftSchema, IssueSchema, PreviewOverrideSchema, type ComponentManifest, type Draft, type Issue, type PreviewOverride } from '@byol/core';
+import { ComponentManifestSchema, DraftApprovalSchema, DraftSchema, IssueSchema, PreviewOverrideSchema, type ComponentManifest, type DesignFinding, type Draft, type DraftApproval, type Issue, type PreviewOverride } from '@byol/core';
+import { ApprovalService, approvalResolves } from './approvals';
 import { IssueService } from './issues';
 import { auditTokens, type SystemToken } from './token-audit';
 
@@ -31,6 +32,7 @@ interface StoredDraft {
   proposals: string[];
   previewValues?: Record<string, unknown>;
   savedIssues?: Issue[];
+  approvals?: DraftApproval[];
 }
 
 /** Binding order is stable for a draft; canonical resolutions only edit or append bindings. */
@@ -150,6 +152,21 @@ export class DraftService {
   getSourceManifest(id: string): ComponentManifest { return structuredClone(this.entry(id).sourceManifest); }
   getCanonicalManifest(id: string): ComponentManifest { return structuredClone(this.entry(id).canonicalManifest); }
   getOverrides(id: string): PreviewOverride[] { return structuredClone(this.entry(id).overrides); }
+  getApprovals(id: string): DraftApproval[] { return structuredClone(this.entry(id).approvals ?? []); }
+  approveFinding(id: string, finding: DesignFinding, approver: string, rationale: string): Promise<DraftApproval> {
+    return this.run(async () => {
+      const entry = structuredClone(this.entry(id));
+      if (finding.draftId !== id || finding.draftRevision !== entry.draft.revision) throw new Error('Finding is stale for this draft revision');
+      const service = new ApprovalService();
+      const approval = service.approve({ finding, approver, rationale });
+      entry.approvals = [...(entry.approvals ?? []).filter((item) => item.id !== approval.id), approval];
+      await this.save(entry);
+      return structuredClone(approval);
+    });
+  }
+  isFindingApproved(id: string, finding: DesignFinding): boolean {
+    return (this.entry(id).approvals ?? []).some((approval) => approvalResolves(approval, finding));
+  }
   getPreviewValues(id: string): Record<string, unknown> {
     return structuredClone(this.entry(id).previewValues ?? {});
   }
@@ -205,6 +222,7 @@ export class DraftService {
         draft: DraftSchema.parse({ id: randomUUID(), componentManifestId: sourceManifest.id, sourceCommit: sourceManifest.source.commit,
           status: 'temporary', revision: 0, createdAt: now, updatedAt: now }),
         sourceManifest, canonicalManifest: structuredClone(sourceManifest), overrides: [], proposals: [],
+        approvals: [],
       };
       await this.save(entry);
       return this.getDraft(entry.draft.id);
@@ -401,6 +419,7 @@ export class DraftService {
       proposals: input.proposals,
       previewValues: input.previewValues,
       savedIssues: (input.savedIssues ?? []).map((issue) => IssueSchema.parse(issue)),
+      approvals: (input.approvals ?? []).map((approval) => DraftApprovalSchema.parse(approval)),
     };
     const { tokens: _sourceTokens, ...sourceMetadata } = entry.sourceManifest;
     const { tokens: _canonicalTokens, ...canonicalMetadata } = entry.canonicalManifest;
@@ -410,6 +429,7 @@ export class DraftService {
       || JSON.stringify(sourceMetadata) !== JSON.stringify(canonicalMetadata)
       || entry.overrides.some((override) => override.draftId !== id)
       || entry.savedIssues!.some((issue) => issue.draftId !== id || issue.draftRevision !== entry.draft.revision)
+      || entry.approvals!.some((approval) => approval.draftId !== id)
       || !Array.isArray(entry.proposals) || entry.proposals.some((proposal) => !entry.overrides.some((override) => override.id === proposal))) {
       throw new Error('Invalid stored draft associations');
     }

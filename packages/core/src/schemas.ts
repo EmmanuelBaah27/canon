@@ -74,6 +74,48 @@ export type DesignSystemAmbiguity = z.infer<typeof DesignSystemAmbiguitySchema>;
 export type DesignSystemProposal = z.infer<typeof DesignSystemProposalSchema>;
 export type ApprovedDesignSystem = z.infer<typeof ApprovedDesignSystemSchema>;
 
+export const DesignFindingSchema = z.strictObject({
+  id: z.string().trim().min(1),
+  category: z.enum(['visual-value', 'component-bypass', 'behavior-rule', 'behavioral-addition', 'ambiguity']),
+  severity: z.enum(['information', 'warning', 'blocker']),
+  repositoryId: z.string().trim().min(1),
+  sourceCommit: z.string().trim().min(1),
+  draftId: z.string().trim().min(1),
+  draftRevision: z.number().int().nonnegative(),
+  componentId: z.string().trim().min(1),
+  ruleId: z.string().trim().min(1),
+  property: z.string().trim().min(1),
+  currentValue: z.unknown(),
+  location: z.strictObject({
+    path: RepositoryPath,
+    line: z.number().int().positive(),
+    column: z.number().int().positive(),
+  }),
+  evidence: z.string().trim().min(1),
+  applicableRule: z.string().trim().min(1),
+  alternatives: z.array(z.string().trim().min(1)),
+  integrationImpact: z.string().trim().min(1),
+  actions: z.array(z.string().trim().min(1)).min(1),
+});
+
+export const DraftApprovalSchema = z.strictObject({
+  id: z.string().trim().min(1),
+  repositoryId: z.string().trim().min(1),
+  sourceCommit: z.string().trim().min(1),
+  draftId: z.string().trim().min(1),
+  draftRevision: z.number().int().nonnegative(),
+  componentId: z.string().trim().min(1),
+  ruleId: z.string().trim().min(1),
+  property: z.string().trim().min(1),
+  exactValue: z.string().min(1),
+  approver: z.string().trim().min(1),
+  rationale: z.string().trim().min(1),
+  approvedAt: Timestamp,
+});
+
+export type DesignFinding = z.infer<typeof DesignFindingSchema>;
+export type DraftApproval = z.infer<typeof DraftApprovalSchema>;
+
 const RequiredString = z.string().refine((value) => value.trim().length > 0, 'Must not be empty');
 const RepositoryUrl = z.url().refine((value) => {
   const url = URL.parse(value);
@@ -173,6 +215,9 @@ export const IssueSchema = z.strictObject({
   draftRevision: Revision.optional(),
   type: z.enum([
     'override',
+    'violation',
+    'ambiguity',
+    'behavioral-addition',
     'token-gap',
     'source-conflict',
     'validation',

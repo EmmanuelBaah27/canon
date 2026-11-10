@@ -1,6 +1,8 @@
 import type {
   ComponentManifest,
+  DesignFinding,
   Draft,
+  DraftApproval,
   Issue,
   PreviewOverride,
   RepositoryConnection,
@@ -35,6 +37,8 @@ export interface CanvasDraft {
     imageHeight?: number;
     text?: string;
   };
+  findings?: DesignFinding[];
+  approvals?: DraftApproval[];
 }
 export interface RuntimeState {
   /** Creation-only, authenticated fragment handoff to the exact existing draft. */
