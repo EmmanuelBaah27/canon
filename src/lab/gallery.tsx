@@ -123,7 +123,7 @@ export function Gallery() {
 
   return (
     <div className="min-h-dvh">
-      <header className="mx-auto flex h-16 max-w-[1280px] items-center gap-4 px-8">
+      <header className="flex h-16 w-full items-center gap-4 px-8">
         <h1 className="text-[15px] font-semibold tracking-[-0.01em]">Lab</h1>
         <KindMenu value={filter} counts={counts} onChange={choose} />
         <div className="ml-auto flex items-center gap-2">
@@ -131,7 +131,7 @@ export function Gallery() {
           <ThemeToggle />
         </div>
       </header>
-      <main className="mx-auto flex max-w-[1280px] flex-col gap-12 px-8">
+      <main className="flex w-full flex-col gap-12 px-8">
         {everything.length ? (
           <>
             <Group title="To judge" note="keep or toss" items={pending} />
