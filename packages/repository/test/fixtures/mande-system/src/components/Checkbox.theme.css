@@ -1,0 +1,2 @@
+@import url("Checkbox.shared.css") layer(mande) screen;
+.checkbox:focus-visible { outline-color: var(--mande-color-focus); }

@@ -1,0 +1,5 @@
+{
+  "name": "mande-system",
+  "scripts": { "prepare": "node execute-trap.cjs", "build": "node execute-trap.cjs", "test": "node execute-trap.cjs" },
+  "dependencies": { "react": "19.0.0", "@radix-ui/react-checkbox": "1.3.0" }
+}

@@ -6,7 +6,10 @@ import { labApi } from './vite/lab-api.ts'
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), labApi(import.meta.dirname)],
-  resolve: { alias: { '@': resolve(import.meta.dirname, 'src') } },
+  resolve: {
+    alias: { '@': resolve(import.meta.dirname, 'src') },
+    dedupe: ['react', 'react-dom'],
+  },
   server: { port: 5420 },
   build: {
     rollupOptions: {

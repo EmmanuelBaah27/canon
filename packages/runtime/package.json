@@ -1,0 +1,21 @@
+{
+  "name": "@byol/runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./controls": "./src/control-derivation.ts",
+    "./protocol": "./src/protocol.ts"
+  },
+  "scripts": {
+    "test": "vitest run --dir src --exclude '**/token-binding-safety.test.ts' --exclude '**/token-capability-safety.test.ts'",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@byol/core": "workspace:*",
+    "@byol/repository": "workspace:*",
+    "typescript": "5.9.3",
+    "vite": "^8.3.5"
+  }
+}

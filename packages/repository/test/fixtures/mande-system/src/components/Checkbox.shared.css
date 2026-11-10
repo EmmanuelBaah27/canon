@@ -1,0 +1,2 @@
+@import "./Checkbox.theme.css";
+.checkbox { mask-image: url("../assets/focus.svg"); }

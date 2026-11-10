@@ -1,0 +1,6 @@
+@import "./Checkbox.theme.css";
+.checkbox {
+  background: var(--mande-color-surface);
+  color: var(--mande-color-text, #000);
+  border: 1px solid var(--mande-border);
+}

@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -10,13 +13,16 @@
     "typecheck": "tsc -b",
     "lab": "node scripts/lab.mjs",
     "render": "node scripts/render.mjs",
-    "test": "vitest run",
+    "test": "vitest run --dir src",
+    "test:byol": "test -d packages/core && npm run test --workspaces --if-present",
+    "typecheck:byol": "test -d packages/core && npm run typecheck --workspaces --if-present",
     "still": "node scripts/render.mjs --still",
     "check": "node scripts/check.mjs",
     "trace": "node scripts/trace.mjs",
     "grid": "node scripts/grid.mjs"
   },
   "dependencies": {
+    "@byol/core": "workspace:*",
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
     "class-variance-authority": "^0.7.1",

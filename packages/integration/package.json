@@ -1,0 +1,17 @@
+{
+  "name": "@byol/integration",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run --dir src",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@byol/core": "workspace:*",
+    "@byol/repository": "workspace:*",
+    "@byol/runtime": "workspace:*",
+    "typescript": "5.9.3"
+  }
+}
