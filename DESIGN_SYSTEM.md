@@ -14,7 +14,7 @@ The tokens and components here govern BYOL chrome: the gallery, specimen shell, 
 | --- | --- |
 | Color | Semantic surface, content, action, feedback, border, and focus tokens in both themes |
 | Typography | Geist for interface text; Geist Mono only for code and measured data; documented size and weight roles |
-| Spacing and size | The 8px grid and 4px in-control half-step from `GRID.md`; named control and component geometry |
+| Spacing and size | The 8px grid and 4px in-control half-step from `GRID.md`; named control, dialog, picker, and issue-rail geometry |
 | Radius | Base radius plus derived control radii; nested radius follows outer minus inset |
 | Elevation | `hairline`, `raised`, `raised-hover`, `floating`, `window`, and `inset` |
 | Motion | Named product durations and easings; product motion remains under 300ms and respects reduced motion |
@@ -32,6 +32,7 @@ All reusable product controls live in `src/components/ui`. Use an existing compo
 | Badge | default, secondary, destructive, outline, ghost, link | focus and invalid when interactive; semantic text remains visible |
 | Button | default, outline, secondary, ghost, destructive, link; xs, sm, default, lg and icon sizes | hover, active, focus, disabled, invalid; native button or Slot semantics |
 | Dropdown menu | item, checkbox, radio, sub-menu and destructive item | roving keyboard focus, checked state, disabled state, Escape dismissal |
+| Dialog | modal content with overlay, title, description and close control | focus trap, labelled title, Escape dismissal, focus return |
 | Input | native input types | placeholder, focus, disabled, invalid; always receives an accessible label at use site |
 | Kbd | key and key group | supplementary text only; never the sole control label |
 | Separator | horizontal and vertical | decorative by default; semantic separator when requested |

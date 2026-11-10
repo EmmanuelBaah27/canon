@@ -1,12 +1,16 @@
 import { ArrowLeftIcon, ClapperboardIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { DialRoot } from 'dialkit'
 import 'dialkit/styles.css'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { everything as specimens, type Specimen } from '@/specimens'
+import { useEverything, type Specimen } from '@/specimens'
+import { IssuesRail } from '@/byol/issues-rail'
+import { SourceDialkit } from '@/byol/dialkit'
+import { sourceDraftStore } from '@/byol/source-draft'
+import { DraftVerdict } from './draft-verdict'
 import { AnatomyOverlay, type AnatomyMode } from './anatomy-overlay'
 import { Hint, Label, ThemeToggle } from './chrome'
 import { FitFrame } from './fit-frame'
@@ -18,8 +22,12 @@ const modeLabels: Record<AnatomyMode, string> = { ui: 'UI', skeleton: 'Skeleton'
 export function SpecimenPage({ specimen }: { specimen: Specimen }) {
   const [mode, setMode] = useState<AnatomyMode>('ui')
   const { dark } = useTheme()
-  const index = specimens.indexOf(specimen)
+  const specimens = useEverything()
+  const index = specimens.findIndex((item) => item.slug === specimen.slug)
   const { Component } = specimen
+  const updateSourceValues = useCallback((values: Record<string, unknown>) => {
+    if (specimen.sourceDraft) sourceDraftStore.updateValues(specimen.sourceDraft.id, values)
+  }, [specimen.sourceDraft])
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -35,7 +43,7 @@ export function SpecimenPage({ specimen }: { specimen: Specimen }) {
     }
     addEventListener('keydown', onKey)
     return () => removeEventListener('keydown', onKey)
-  }, [index, specimen.kind])
+  }, [index, specimen.kind, specimens])
 
   return (
     <div className="grid h-dvh grid-rows-[auto_1fr_auto]">
@@ -73,11 +81,13 @@ export function SpecimenPage({ specimen }: { specimen: Specimen }) {
               </a>
             </Button>
           ))}
+          {specimen.sourceDraft?.status === 'temporary' && <DraftVerdict specimen={specimen} />}
           <ThemeToggle />
         </div>
       </header>
 
-      <main className="grid min-h-0">
+      <main className="relative grid min-h-0">
+        {specimen.sourceDraft && <IssuesRail issues={specimen.sourceDraft.issues} />}
         <FitFrame
           width={specimen.width}
           height={specimen.height}
@@ -91,6 +101,7 @@ export function SpecimenPage({ specimen }: { specimen: Specimen }) {
       </main>
 
       <aside aria-label="Tuning">
+        {specimen.sourceDraft && <SourceDialkit draftId={specimen.sourceDraft.id} name={specimen.name} controls={specimen.sourceDraft.controls} onChange={updateSourceValues} />}
         <DialRoot position="bottom-right" theme={dark ? "dark" : "light"} />
       </aside>
       <footer className="flex h-11 items-center px-5 font-mono text-[11px] text-muted-foreground tabular">

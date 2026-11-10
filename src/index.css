@@ -87,12 +87,18 @@
   --spacing-switch-height: 1.25rem;
   --spacing-switch-width: 2rem;
   --spacing-menu-min: 6rem;
+  --spacing-dialog-max: 35rem;
+  --spacing-dialog-top: 18%;
+  --spacing-picker-list-max: 22.5rem;
+  --spacing-issue-rail: 17.5rem;
+  --spacing-issue-rail-collapsed: 2.5rem;
 
   --text-compact: 0.8rem;
 
   --radius-control-xs: min(var(--radius-md), 10px);
   --radius-control-sm: min(var(--radius-md), 12px);
   --radius-tooltip-arrow: 2px;
+  --radius-shell: calc(var(--radius) * 2);
 
   --transition-duration-product: 150ms;
 

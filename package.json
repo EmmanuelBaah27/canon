@@ -15,6 +15,7 @@
     "render": "node scripts/render.mjs",
     "test": "vitest run --dir src",
     "test:byol": "test -d packages/core && npm run test --workspaces --if-present",
+    "test:e2e": "playwright test",
     "typecheck:byol": "test -d packages/core && npm run typecheck --workspaces --if-present",
     "still": "node scripts/render.mjs --still",
     "check": "node scripts/check.mjs",

@@ -19,6 +19,17 @@ interface RepositoryApi {
     proposal: DesignSystemProposal
     manifest: DesignSystemManifest
   }) => Promise<ApprovedDesignSystem>
+  discoverComponents: (connection: RepositoryConnection) => Promise<Array<{ id: string; name: string; source: { path: string } }>>
+  buildComponentManifest: (componentId: string) => Promise<import('../packages/core/src/schemas.ts').ComponentManifest>
+  getApprovedDesignSystem: (repositoryId: string) => ApprovedDesignSystem | undefined
+  readComponentEvidence: (connection: RepositoryConnection, componentId: string) => Promise<Record<string, string>>
+}
+
+interface RuntimeApi {
+  extractPublicProperties: (source: string, exportName: string) => unknown[]
+  deriveControls: (manifest: import('../packages/core/src/schemas.ts').ComponentManifest, properties?: readonly unknown[]) => { controls: unknown[]; issues: import('../packages/core/src/schemas.ts').Issue[] }
+  validateDesignContract: (input: Record<string, unknown>) => import('../packages/core/src/schemas.ts').DesignFinding[]
+  findingToIssue: (finding: import('../packages/core/src/schemas.ts').DesignFinding) => import('../packages/core/src/schemas.ts').Issue
 }
 
 const send = (res: ServerResponse, status: number, body: object) => {
@@ -59,6 +70,39 @@ export function labApi(root: string): Plugin {
               manifest: payload.manifest as DesignSystemManifest,
             })
             return send(res, 200, { approved })
+          }
+          if (action === 'repository/components') {
+            const repository = await server.ssrLoadModule('/packages/repository/src/index.ts') as RepositoryApi
+            const connection = payload.connection as RepositoryConnection
+            const approved = repository.getApprovedDesignSystem(connection.id)
+            if (!approved) throw new Error('Approve the connected design system before listing components')
+            const discovered = await repository.discoverComponents(connection)
+            const components = discovered.filter((component) => approved.manifest.components.some((root) => component.source.path === root || component.source.path.startsWith(`${root}/`)))
+            return send(res, 200, { components })
+          }
+          if (action === 'draft/create') {
+            const repository = await server.ssrLoadModule('/packages/repository/src/index.ts') as RepositoryApi
+            const runtime = await server.ssrLoadModule('/packages/runtime/src/index.ts') as RuntimeApi
+            const connection = payload.connection as RepositoryConnection
+            const approved = repository.getApprovedDesignSystem(connection.id)
+            if (!approved) throw new Error('Approve the connected design system before creating a draft')
+            const manifest = await repository.buildComponentManifest(String(payload.componentId ?? ''))
+            const sources = await repository.readComponentEvidence(connection, manifest.id)
+            const properties = runtime.extractPublicProperties(sources[manifest.source.path] ?? '', manifest.source.exportName)
+            const derived = runtime.deriveControls(manifest, properties)
+            const findings = runtime.validateDesignContract({
+              repositoryId: connection.id, sourceCommit: manifest.source.commit, draftId: manifest.id, draftRevision: 0,
+              componentId: manifest.id, componentPath: manifest.source.path, sources, manifest: approved.manifest,
+              tokenNames: manifest.tokens.map((binding) => binding.token), behavioralRules: {},
+            })
+            const issues = [...derived.issues, ...findings.map(runtime.findingToIssue)]
+            if (!/checkbox/i.test(manifest.name)) issues.push({
+              id: `preview-reconstruction:${manifest.id}`, draftId: manifest.id, draftRevision: 0,
+              type: 'validation', severity: 'blocker', target: { kind: 'component', id: manifest.id },
+              message: 'This component needs a reviewed source reconstruction before integration.',
+              resolutionActions: ['review-source'], createdAt: new Date().toISOString(),
+            })
+            return send(res, 200, { manifest, approvedDesignSystem: { repositoryId: approved.repositoryId, sourceCommit: approved.sourceCommit }, controls: derived.controls, issues })
           }
           send(res, 404, { error: `Unknown action "${action}"` })
         } catch (error) {

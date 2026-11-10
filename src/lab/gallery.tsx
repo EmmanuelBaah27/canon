@@ -1,12 +1,13 @@
 import { ArrowRightIcon } from 'lucide-react'
 import { useState } from 'react'
-import { everything, isDraft, type Specimen } from '@/specimens'
+import { isDraft, useEverything, type Specimen } from '@/specimens'
 import { kindOrder, kinds, type Kind } from '@/specimens/kinds'
 import { cn } from '@/lib/utils'
 import { FitFrame } from './fit-frame'
 import { ThemeToggle } from './chrome'
 import { DraftVerdict } from './draft-verdict'
 import { KindMenu, type KindFilter } from './kind-menu'
+import { RepositoryActions } from '@/byol/repository-actions'
 
 const EASE = 'ease-[cubic-bezier(0.23,1,0.32,1)]'
 
@@ -109,6 +110,7 @@ function Empty() {
 }
 
 export function Gallery() {
+  const everything = useEverything()
   const [filter, setFilter] = useState<KindFilter>(() => (sessionStorage.getItem('kind') as KindFilter | null) ?? 'all')
   const counts = Object.fromEntries(kindOrder.map((kind) => [kind, everything.filter((specimen) => specimen.kind === kind).length])) as Record<Kind, number>
   const shown = everything.filter((specimen) => filter === 'all' || specimen.kind === filter)
@@ -125,6 +127,7 @@ export function Gallery() {
         <h1 className="text-[15px] font-semibold tracking-[-0.01em]">Lab</h1>
         <KindMenu value={filter} counts={counts} onChange={choose} />
         <div className="ml-auto flex items-center gap-2">
+          <RepositoryActions />
           <ThemeToggle />
         </div>
       </header>

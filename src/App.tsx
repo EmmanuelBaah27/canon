@@ -1,5 +1,5 @@
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { findSpecimen } from '@/specimens'
+import { useEverything } from '@/specimens'
 import { Gallery } from '@/lab/gallery'
 import { useEffect } from 'react'
 import { isTypingTarget, useRoute, useTheme } from '@/lab/hooks'
@@ -7,6 +7,7 @@ import { SpecimenPage } from '@/lab/specimen-page'
 
 export default function App() {
   const route = useRoute()
+  const specimens = useEverything()
   const { toggle } = useTheme()
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -17,6 +18,6 @@ export default function App() {
     addEventListener('keydown', onKey)
     return () => removeEventListener('keydown', onKey)
   }, [toggle])
-  const specimen = route.page === 'specimen' ? findSpecimen(route.slug) : undefined
+  const specimen = route.page === 'specimen' ? specimens.find((item) => item.slug === route.slug) : undefined
   return <TooltipProvider delayDuration={400}>{specimen ? <SpecimenPage specimen={specimen} /> : <Gallery />}</TooltipProvider>
 }

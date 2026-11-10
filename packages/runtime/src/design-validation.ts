@@ -106,6 +106,7 @@ export function validateDesignContract(input: ValidateDesignContractInput): Desi
       }
       for (const match of source.matchAll(/<\s*(button|input|select|textarea)\b/gi)) {
         const tag = match[1].toLowerCase();
+        if (input.manifest.components.some((root) => path === root || path.startsWith(`${root}/`))) continue;
         if (!input.manifest.components.some((candidate) => candidate.toLowerCase().includes(`/${tag}.`) || candidate.toLowerCase().endsWith(`/${tag}`))) continue;
         findings.push(makeFinding(input, {
           category: 'component-bypass', severity: 'blocker', ruleId: 'sharedComponentBypass', property: tag, currentValue: `<${tag}>`,

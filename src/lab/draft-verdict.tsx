@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { Specimen } from '@/specimens'
+import { sourceDraftStore } from '@/byol/source-draft'
 
 type Phase = { kind: 'idle' } | { kind: 'tossing' } | { kind: 'busy' } | { kind: 'error'; message: string }
 
@@ -22,6 +23,13 @@ export function DraftVerdict({ specimen }: { specimen: Specimen }) {
   const run = async (action: 'keep' | 'toss') => {
     setPhase({ kind: 'busy' })
     try {
+      if (specimen.sourceDraft) {
+        if (action === 'keep') sourceDraftStore.keep(specimen.sourceDraft.id)
+        else sourceDraftStore.remove(specimen.sourceDraft.id)
+        if (action === 'toss') location.hash = '#/'
+        setPhase({ kind: 'idle' })
+        return
+      }
       await post(action, specimen, reason)
     } catch (error) {
       setPhase({ kind: 'error', message: (error as Error).message })
