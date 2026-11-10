@@ -1,0 +1,13 @@
+{
+  "$schema": "https://byol.dev/schemas/design-system.v1.json",
+  "version": 1,
+  "tokens": ["src/index.css"],
+  "components": ["src/components/ui"],
+  "rules": ["AGENTS.md", "TASTE.md", "GRID.md", "DESIGN_SYSTEM.md"],
+  "themes": ["light", "dark"],
+  "validation": {
+    "hardcodedVisualValues": "approval",
+    "sharedComponentBypass": "approval",
+    "unknownBehavioralValues": "notice"
+  }
+}

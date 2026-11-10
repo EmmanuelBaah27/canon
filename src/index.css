@@ -78,6 +78,26 @@
   --shadow-window: var(--elevation-window);
   --shadow-inset: var(--elevation-inset);
 
+  --spacing-control-xs: 1.5rem;
+  --spacing-control-sm: 1.75rem;
+  --spacing-control: 2rem;
+  --spacing-control-lg: 2.25rem;
+  --spacing-switch-sm-height: 1rem;
+  --spacing-switch-sm-width: 1.5rem;
+  --spacing-switch-height: 1.25rem;
+  --spacing-switch-width: 2rem;
+  --spacing-menu-min: 6rem;
+
+  --text-compact: 0.8rem;
+
+  --radius-control-xs: min(var(--radius-md), 10px);
+  --radius-control-sm: min(var(--radius-md), 12px);
+  --radius-tooltip-arrow: 2px;
+
+  --transition-duration-product: 150ms;
+
+  --shadow-tooltip: 0 0 0 1px var(--tooltip-ring), var(--elevation-floating);
+
   --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -150,6 +170,10 @@
     inset 0 1px 2px oklch(0.2 0.006 70 / 0.05);
 
   --dot: oklch(0.2 0.0036 70 / 0.09);
+  --primary-raised: linear-gradient(to bottom, oklch(1 0 0 / 0.14), transparent);
+  --secondary-hover: color-mix(in oklab, var(--secondary), var(--foreground) 5%);
+  --switch-thumb-travel: calc(100% - 2px);
+  --tooltip-arrow-offset: calc(-50% - 2px);
 }
 
 @media (min-resolution: 2dppx) {
