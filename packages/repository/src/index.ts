@@ -3,3 +3,9 @@ export { discoverComponents, buildComponentManifest, type DiscoveredComponent } 
 export { resolveRepositoryPath } from './safe-path';
 export { readComponentEvidence } from './discover';
 export { parseCssSource } from './css-source';
+export {
+  approveDesignSystemProposal,
+  discoverDesignSystem,
+  getApprovedDesignSystem,
+  type ApproveDesignSystemProposalInput,
+} from './design-system';

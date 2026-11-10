@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+const Timestamp = z.iso.datetime({ offset: true });
 const RepositoryPath = z.string().trim().min(1).refine((path) => {
   if (path.includes('\0') || path.includes('\\') || path.startsWith('/') || /^[A-Za-z]:/.test(path)) return false;
   return !path.split('/').some((segment) => segment === '..' || segment === '');
@@ -39,12 +40,45 @@ export const DesignSystemManifestSchema = z.strictObject({
 
 export type DesignSystemManifest = z.infer<typeof DesignSystemManifestSchema>;
 
+export const DesignSystemCandidateSchema = z.strictObject({
+  path: RepositoryPath,
+  role: z.enum(['tokens', 'components', 'rules']),
+  confidence: z.enum(['explicit', 'high', 'medium', 'low']),
+  evidence: z.array(z.string().trim().min(1)).min(1),
+});
+
+export const DesignSystemAmbiguitySchema = z.strictObject({
+  path: RepositoryPath,
+  roles: z.array(z.enum(['tokens', 'components', 'rules'])).min(2),
+  evidence: z.array(z.string().trim().min(1)).min(1),
+});
+
+export const DesignSystemProposalSchema = z.strictObject({
+  repositoryId: z.string().trim().min(1),
+  sourceCommit: z.string().regex(/^[a-f0-9]{40,64}$/),
+  origin: z.enum(['manifest', 'inferred']),
+  manifest: DesignSystemManifestSchema,
+  candidates: z.array(DesignSystemCandidateSchema),
+  ambiguities: z.array(DesignSystemAmbiguitySchema),
+});
+
+export const ApprovedDesignSystemSchema = z.strictObject({
+  repositoryId: z.string().trim().min(1),
+  sourceCommit: z.string().regex(/^[a-f0-9]{40,64}$/),
+  manifest: DesignSystemManifestSchema,
+  approvedAt: Timestamp,
+});
+
+export type DesignSystemCandidate = z.infer<typeof DesignSystemCandidateSchema>;
+export type DesignSystemAmbiguity = z.infer<typeof DesignSystemAmbiguitySchema>;
+export type DesignSystemProposal = z.infer<typeof DesignSystemProposalSchema>;
+export type ApprovedDesignSystem = z.infer<typeof ApprovedDesignSystemSchema>;
+
 const RequiredString = z.string().refine((value) => value.trim().length > 0, 'Must not be empty');
 const RepositoryUrl = z.url().refine((value) => {
   const url = URL.parse(value);
   return url !== null && !url.username && !url.password && !url.search && !url.hash;
 }, 'Repository URLs must not contain credentials, queries, or fragments');
-const Timestamp = z.iso.datetime({ offset: true });
 const repositoryMetadata = {
   id: RequiredString,
   name: RequiredString,

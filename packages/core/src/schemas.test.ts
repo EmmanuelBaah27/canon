@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   ComponentManifestSchema,
+  ApprovedDesignSystemSchema,
+  DesignSystemProposalSchema,
   DraftSchema,
   IntegrationApprovalSchema,
   IssueSchema,
@@ -13,6 +15,36 @@ import {
   type PreviewOverride,
   type RepositoryConnection,
 } from './index';
+
+const designSystemManifest = {
+  $schema: 'https://byol.dev/schemas/design-system.v1.json' as const,
+  version: 1 as const,
+  tokens: ['src/tokens.css'], components: ['src/components'], rules: ['DESIGN_SYSTEM.md'], themes: ['light'],
+  validation: { hardcodedVisualValues: 'approval' as const, sharedComponentBypass: 'approval' as const, unknownBehavioralValues: 'notice' as const },
+};
+
+describe('connected design-system contracts', () => {
+  it('binds proposals and approvals to repository identity and source commit', () => {
+    const proposal = {
+      repositoryId: 'mande', sourceCommit: 'a'.repeat(40), origin: 'manifest' as const,
+      manifest: designSystemManifest,
+      candidates: [{ path: 'src/tokens.css', role: 'tokens' as const, confidence: 'explicit' as const, evidence: ['declared by manifest'] }],
+      ambiguities: [],
+    };
+    expect(DesignSystemProposalSchema.parse(proposal)).toEqual(proposal);
+    expect(ApprovedDesignSystemSchema.parse({
+      repositoryId: proposal.repositoryId, sourceCommit: proposal.sourceCommit, manifest: designSystemManifest, approvedAt: '2026-11-10T05:00:00.000Z',
+    }).sourceCommit).toBe(proposal.sourceCommit);
+  });
+
+  it('rejects proposals with pathless evidence or unbound commits', () => {
+    const proposal = {
+      repositoryId: 'mande', sourceCommit: 'not-a-commit', origin: 'inferred', manifest: designSystemManifest,
+      candidates: [{ path: 'src/tokens.css', role: 'tokens', confidence: 'high', evidence: [] }], ambiguities: [],
+    };
+    expect(DesignSystemProposalSchema.safeParse(proposal).success).toBe(false);
+  });
+});
 
 const createdAt = '2026-11-10T05:00:00.000Z';
 const localRepository: RepositoryConnection = {
