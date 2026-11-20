@@ -138,6 +138,35 @@ describe('canonical containment', () => {
 });
 
 describe('static committed-source discovery', () => {
+  it('lists compound component families once instead of publishing their parts', async () => {
+    await writeFile(join(repository, 'src/components/accordion.tsx'), `
+      import * as AccordionPrimitive from '@radix-ui/react-accordion';
+      export const Accordion = AccordionPrimitive.Root;
+      export const AccordionItem = (props: object) => <AccordionPrimitive.Item {...props} />;
+      export const AccordionTrigger = (props: object) => <AccordionPrimitive.Trigger {...props} />;
+      export const AccordionContent = (props: object) => <AccordionPrimitive.Content {...props} />;
+    `);
+    await writeFile(join(repository, 'src/components/alert-dialog.tsx'), `
+      import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
+      export const AlertDialog = AlertDialogPrimitive.Root;
+      export const AlertDialogTrigger = (props: object) => <AlertDialogPrimitive.Trigger {...props} />;
+      export const AlertDialogContent = (props: object) => <AlertDialogPrimitive.Content {...props} />;
+      export const AlertDialogTitle = (props: object) => <AlertDialogPrimitive.Title {...props} />;
+      export const AlertDialogAction = (props: object) => <AlertDialogPrimitive.Action {...props} />;
+    `);
+    await commit();
+
+    const connection = await connectRepository({ kind: 'local', path: repository });
+    const names = (await discoverComponents(connection)).map((component) => component.name);
+
+    expect(names).toContain('Accordion');
+    expect(names).toContain('AlertDialog');
+    expect(names).not.toContain('AccordionTrigger');
+    expect(names).not.toContain('AccordionContent');
+    expect(names).not.toContain('AlertDialogAction');
+    expect(names).not.toContain('AlertDialogTitle');
+  });
+
   it('discovers the exported Checkbox once and excludes stories, tests and helpers', async () => {
     const { components } = await checkbox();
     expect(components.filter((entry) => entry.name === 'Checkbox')).toHaveLength(1);

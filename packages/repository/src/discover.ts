@@ -138,7 +138,32 @@ function exportedComponents(source: ts.SourceFile): { name: string; exportName: 
       }
     }
   }
-  return [...exports].filter(([name]) => /^[A-Z]/.test(name) && declarations.has(name) && hasJsx(declarations.get(name)!))
+  const exportedDeclarations = [...exports].filter(
+    ([name]) => /^[A-Z]/.test(name) && declarations.has(name),
+  );
+  const fileRoot = posix
+    .basename(source.fileName)
+    .replace(/\.[^.]+$/, '')
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+  const root = exportedDeclarations.find(([name]) => name === fileRoot);
+  const parts = root
+    ? exportedDeclarations.filter(
+        ([name]) =>
+          name !== fileRoot &&
+          name.startsWith(fileRoot) &&
+          hasJsx(declarations.get(name)!),
+      )
+    : [];
+
+  if (root && parts.length) {
+    return [{ name: root[0], exportName: root[1] }];
+  }
+
+  return exportedDeclarations
+    .filter(([name]) => hasJsx(declarations.get(name)!))
     .map(([name, exportName]) => ({ name, exportName }));
 }
 

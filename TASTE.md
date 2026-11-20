@@ -9,6 +9,7 @@ Your rules. Agents read this before building anything, and it overrides their de
 - Product size and density: 12 to 14px text, 32px controls, 40 to 48px rows, 8px gaps. Generous padding reads as a mockup.
 - Finish every state before showing it: empty, hover, active, disabled, error, long text.
 - Specific content. Real-sounding names and numbers, never "Item 1" or lorem ipsum.
+- List each compound component once. Its Trigger, Content, Title, Action, and other parts belong with the parent because they only make sense as one composition.
 
 ## Surfaces
 
