@@ -17,7 +17,7 @@ Make
 
 Judge
   keep <slug>                 Move a draft into src/specimens and log it in LEDGER.md
-  toss <slug> --reason "..."  Bin a draft and add the reason to TASTE.md
+  toss <slug> --reason "..."  Bin a draft and record the reason in LEDGER.md
 
 Check
   grid <slug>                 Check spacing, radius, and type limits from GRID.md
@@ -156,7 +156,7 @@ switch (command) {
   case 'toss': {
     try {
       const result = toss(root, rest[0], arg.reason ?? rest.slice(1).join(' '))
-      done(result, `Tossed ${result.slug} to ${result.tossed}. Reason added to TASTE.md.`)
+      done(result, `Tossed ${result.slug} to ${result.tossed}. Reason recorded in LEDGER.md.`)
     } catch (error) {
       fail(error.message)
     }

@@ -13,7 +13,7 @@ The tokens and components here govern BYOL chrome: the gallery, specimen shell, 
 | Category | Contract |
 | --- | --- |
 | Color | Semantic surface, content, action, feedback, border, and focus tokens in both themes |
-| Typography | Geist for interface text; Geist Mono only for code and measured data; documented size and weight roles |
+| Typography | Inter for interface text; Geist Mono only for code and measured data; documented size and weight roles |
 | Spacing and size | The 8px grid and 4px in-control half-step from `GRID.md`; named control, dialog, picker, and issue-rail geometry |
 | Radius | Base radius plus derived control radii; nested radius follows outer minus inset |
 | Elevation | `hairline`, `raised`, `raised-hover`, `floating`, `window`, and `inset` |

@@ -88,7 +88,7 @@ export function paintAnatomy(parent: HTMLElement, anatomy: Anatomy, unit = 1): P
       borderRadius: '999px',
       background: 'var(--signal)',
       color: 'oklch(0.99 0 0)',
-      font: `600 ${12 * unit}px/${20 * unit}px 'Geist Variable', ui-sans-serif, sans-serif`,
+      font: `600 ${12 * unit}px/${20 * unit}px 'Inter Variable', ui-sans-serif, sans-serif`,
       textAlign: 'center',
       fontVariantNumeric: 'tabular-nums',
       whiteSpace: 'nowrap',

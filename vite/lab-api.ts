@@ -7,6 +7,7 @@ import type {
   RepositoryConnection,
 } from '../packages/core/src/schemas.ts'
 import { keep, toss } from '../scripts/verdict.mjs'
+import { markTasteReviewed, tasteReviewStatus } from '../scripts/taste-review.mjs'
 
 interface RepositoryApi {
   connectRepository: (
@@ -44,12 +45,14 @@ export function labApi(root: string): Plugin {
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use('/__lab', async (req, res) => {
-        if (req.method !== 'POST') return send(res, 405, { error: 'POST only' })
-        let body = ''
-        for await (const chunk of req) body += chunk
-        const payload = JSON.parse(body || '{}') as Record<string, unknown>
-        const action = req.url?.replace(/^\//, '')
+        const action = req.url?.replace(/^\//, '').split('?')[0]
         try {
+          if (req.method === 'GET' && action === 'taste-review') return send(res, 200, tasteReviewStatus(root))
+          if (req.method !== 'POST') return send(res, 405, { error: 'POST only' })
+          if (action === 'mark-taste-reviewed') return send(res, 200, markTasteReviewed(root))
+          let body = ''
+          for await (const chunk of req) body += chunk
+          const payload = JSON.parse(body || '{}') as Record<string, unknown>
           if (action === 'keep') return send(res, 200, keep(root, String(payload.slug ?? '')))
           if (action === 'toss') return send(res, 200, toss(root, String(payload.slug ?? ''), typeof payload.reason === 'string' ? payload.reason : undefined))
           if (action === 'repository/connect') {

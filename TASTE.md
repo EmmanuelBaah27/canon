@@ -1,6 +1,6 @@
 # Taste
 
-Your rules. Agents read this before building anything, and it overrides their defaults. Every crit note and toss reason becomes one line here, with its reason. The rules below are a starting point: edit, delete, and add your own.
+Mande's approved reusable rules. Agents read this before building anything for Mande, and it overrides their defaults. Raw keep/toss history stays in `LEDGER.md`; only owner-approved lessons belong here.
 
 ## The bar
 
@@ -31,3 +31,4 @@ Your rules. Agents read this before building anything, and it overrides their de
 - The camera and the cursor never move at the same time.
 - A click reads only when the cursor arrives, pauses, then presses.
 - Guides and measurements only when the point is a relationship between parts. On a single control they're decoration.
+

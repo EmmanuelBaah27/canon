@@ -8,6 +8,7 @@ import { ThemeToggle } from './chrome'
 import { DraftVerdict } from './draft-verdict'
 import { KindMenu, type KindFilter } from './kind-menu'
 import { RepositoryActions } from '@/byol/repository-actions'
+import { TasteReviewPrompt } from './taste-review'
 
 const EASE = 'ease-[cubic-bezier(0.23,1,0.32,1)]'
 
@@ -132,6 +133,7 @@ export function Gallery() {
         </div>
       </header>
       <main className="flex w-full flex-col gap-12 px-8">
+        <TasteReviewPrompt />
         {everything.length ? (
           <>
             <Group title="To judge" note="keep or toss" items={pending} />
