@@ -25,7 +25,7 @@ Lay out in this order, and don't skip ahead:
 
 ## 4. Type budget
 
-- Two families at most: Geist (sans) and one other, Geist Mono for code or a serif for display. Asking before adding a serif is required: it's a new font dependency.
+- Two families at most: Inter (sans) and one other, Geist Mono for code or a serif for display. Asking before adding a serif is required: it's a new font dependency.
 - Per component: at most **three sizes** and **three weights**. Pick from 12, 14, 16, 20, 24, 32, 48 (plus 64 or 96 for a display stat) and from 400, 500, 600.
 - Full-bleed specimens (explainers, bentos) have no outer frame: the 24/24 rule applies to their surfaces and tiles instead.
 - One size and weight per role: title, body, meta. If a fourth role appears, merge it into one of the three.
